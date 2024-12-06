@@ -1,0 +1,262 @@
+
+/**
+ * Write a description of class Shkkbxb here.
+ *
+ * @author (your name)
+ * @version (a version number or a date)
+ */
+import java.util.Scanner;
+
+public class Shkkbxb
+{
+    static Scanner input = new Scanner(System.in);
+    
+    static String rock = null;
+    static String paper = null;
+    static String scissors = null;
+    
+    static int plrScore = 0;
+    static int cpuScore = 0;
+    
+    //some stat stuff
+    static int pp = 0;
+    static int pf = 0;
+    static int pc = 0;
+        
+    static int p = 0;
+    static int f = 0;
+    static int c = 0;
+    
+    public static void main(String[] args)
+    {
+        changeLanguage();
+        tutorial();
+        
+        String choice = null;
+        String cpuChoice = null;
+        String winner = null;
+        
+        boolean playing = true;
+        
+        while (playing){
+            do {
+                choice = getChoice();
+                
+                if (!choice.equals(rock) && !choice.equals(paper) && !choice.equals(scissors)){
+                    System.out.println("Invalid choice, pick again");
+                } else{
+                    cpuChoice = getCPUChoice();
+                    
+                    incrementChoices(choice, cpuChoice);
+                    
+                    winner = checkWinner(choice, cpuChoice);
+                }
+            } while (!choice.equals(rock) && !choice.equals(paper) && !choice.equals(scissors) || winner == null);
+            
+            showResults(winner, choice, cpuChoice);
+            
+            System.out.println("\nWant to play again? Enter N to stop, enter any other key to continue");
+            
+            String confirm = input.nextLine().toLowerCase();
+            
+            if (confirm.equals("n")){
+                playing = false;
+                
+                System.out.println("Your final score: " + plrScore);
+                System.out.println("CPU final score: " + cpuScore);
+            }
+        }
+        
+    }
+    
+    //rename rock, paper, and scissors to respective language
+    public static void renameStuff(String language){
+        if (language.equals("english")){
+            rock = "rock";
+            paper = "paper";
+            scissors = "scissors";
+        } else if (language.equals("french")){
+            rock = "pierre";
+            paper = "feuille";
+            scissors = "ciseaux";
+        } else if (language.equals("japanese")){
+            rock = "rokku";
+            paper = "kami";
+            scissors = "hasami";
+        } else if (language.equals("chinese")){
+            rock = "yanshi";
+            paper = "zhi";
+            scissors = "jian dao";
+        }
+    }
+    
+    //change language
+    public static void changeLanguage(){
+        String language = null;
+        
+        while (language == null){
+            System.out.println("select a language (english/french/japanese/chinese)");
+            
+            String choice = input.nextLine().toLowerCase();
+            
+            if (choice.equals("english") || choice.equals("french") || choice.equals("japanese") || choice.equals("chinese")){
+                language = choice;
+            }
+        }
+        
+        renameStuff(language);
+        intro(language);
+    }
+    
+    //print rock paper scissors in language
+    public static void intro(String language){
+        if (language.equals("japanese")){
+            System.out.println("jan-ken-pon");
+        } else if (language.equals("chinese")){
+            System.out.println("shitou-jiandao-bu");
+        } else{
+            System.out.println(rock + "-" + paper + "-" + scissors);
+        }
+    }
+    
+    //instructions for noobs
+    public static void tutorial(){
+        System.out.println(rock + " beats " + scissors);
+        System.out.println(paper + " beats " + rock);
+        System.out.println(scissors + " beats " + paper);
+    }
+    
+    //ask for user input
+    public static String getChoice(){        
+        System.out.println("what is your choice? (" + rock + "/" + paper + "/" + scissors + ")");
+            
+        String choice = input.nextLine().toLowerCase();
+        
+        return choice;
+    }
+    
+    //get random cpu choice
+    public static String getCPUChoice(){
+        String cpuChoice;
+        double random = Math.random();
+                    
+        cpuChoice = scissors;
+        
+        if (random <= 1.0/3){
+            cpuChoice = rock;
+        } else if(random <= 2.0/3){
+            cpuChoice = paper;
+        }
+        
+        return cpuChoice;
+    }
+    
+    //add to score
+    public static void incrementScore(String winner){
+        if (winner.equals("Player")){
+            plrScore += 1;
+        } else{
+            cpuScore += 1;
+        }
+    }
+    
+    //add to score (null overload)
+    public static void incrementScore(){
+        System.out.println("Tie, no points given to either side");
+    }
+    
+    //add to choice stats
+    public static void incrementChoices(String plrChoice, String cpuChoice){
+        if (plrChoice.equals(rock)){
+            pp += 1;
+        } else if (plrChoice.equals(paper)){
+            pf += 1;
+        } else{
+            pc += 1;
+        }
+        
+        if (cpuChoice.equals(rock)){
+            p += 1;
+        } else if (cpuChoice.equals(paper)){
+            f += 1;
+        } else{
+            c += 1;
+        }
+    }
+    
+    //check for winner or tie
+    public static String checkWinner(String plrChoice, String cpuChoice){
+        String winner = null;
+        
+        if ( (plrChoice.equals(rock) && cpuChoice.equals(scissors)) || (plrChoice.equals(paper) && cpuChoice.equals(rock)) || (plrChoice.equals(scissors) && cpuChoice.equals(paper))){
+            //plr win
+            winner = "Player";
+        } else if (plrChoice.equals(cpuChoice)){
+            //tie
+            winner = null;
+        } else{
+            //plr lose
+            winner = "CPU";
+        }
+        
+        if (winner != null){
+            incrementScore(winner);
+        } else{
+            incrementScore();
+        }
+        
+        return winner;
+    }
+    
+    //winner flavor text
+    public static void showWinner(String winner, String plrChoice, String cpuChoice){
+        if (winner.equals("Player")){
+            System.out.println("Your " + plrChoice + " beats CPU's " + cpuChoice + ". You win");
+        } else{
+            System.out.println("CPU's " + cpuChoice + " beats your " + plrChoice + ". You lose");
+        }
+    }
+    
+    //print most picked
+    public static void showMostPicked(){
+        if (pp > pf && pp > pc){
+            System.out.println("Your most picked choice: " + rock);
+        } else if (pf > pp && pf > pc){
+            System.out.println("Your most picked choice: " + paper);
+        } else if (pc > pp && pc > pf){
+            System.out.println("Your most picked choice: " + scissors);
+        } else{
+            System.out.println("You do not have a most picked choice\n");
+        }
+        
+        if (p > f && p > c){
+            System.out.println("CPU's most picked choice: " + rock);
+        } else if (f > p && f > c){
+            System.out.println("CPU's most picked choice: " + paper);
+        } else if (c > p && c > f){
+            System.out.println("CPU's most picked choice: " + scissors);
+        } else{
+            System.out.println("CPU does not have a most picked choice");
+        }
+    }
+    
+    //print results
+    public static void showResults(String winner, String plrChoice, String cpuChoice){
+        System.out.println("You chose: " + plrChoice);
+        System.out.println("CPU chose: " + cpuChoice);
+        
+        showWinner(winner, plrChoice, cpuChoice);
+        
+        System.out.println("Your score: " + plrScore);
+        System.out.println("CPU score: " + cpuScore);
+        
+        System.out.println("-----------------");
+        
+        showMostPicked();
+        
+        System.out.println("-----------------");
+    }
+}
+
+
+
